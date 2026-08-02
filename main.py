@@ -1,6 +1,6 @@
 """
 CHIC — Boutique de Lujo | main.py
-Versión corregida y optimizada para Streamlit Cloud con rutas seguras y arquitectura robusta.
+Versión corregida y optimizada para Streamlit Cloud, iOS y Android.
 Arquitectura del proyecto:
   ├── main.py
   ├── static/     (manifest.json, sw.js, iconos)
@@ -14,7 +14,6 @@ from pathlib import Path
 import streamlit as st
 
 # ── Configuración de la página ────────────────────────────────────────────────
-# Debe ser la primera instrucción de Streamlit en ejecutarse
 st.set_page_config(
     page_title="+CHIC | Luxury Gifts · Sarasota, FL",
     page_icon="✦",
@@ -22,7 +21,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ── Rutas relativas seguras para Streamlit Cloud y ejecución local ────────────
+# ── Rutas relativas seguras ───────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent
 ASSETS   = BASE_DIR / "assets"
 CSS_FILE = BASE_DIR / "css" / "luxury_style.css"
@@ -220,7 +219,7 @@ def inject_pwa_and_css():
         margin-bottom: 12px !important;
     }
 
-    /* Etiqueta superior en tono dorado constante sin interferencia de azul */
+    /* Etiqueta superior en tono dorado constante */
     .ornament, p.ornament, span.ornament, a.ornament { 
         font-family: 'Montserrat', sans-serif !important; 
         font-size: 0.68rem !important; 
@@ -238,6 +237,7 @@ def inject_pwa_and_css():
         margin: 32px auto;
     }
 
+    /* Pestañas superiores estilizadas y legibles por defecto en iOS/Android */
     .stTabs [data-baseweb="tab-list"] {
         background: #FFFFFF !important;
         border-bottom: 2px solid #D4AF37 !important;
@@ -256,12 +256,12 @@ def inject_pwa_and_css():
         font-weight: 600 !important;
         letter-spacing: 0.14em !important;
         text-transform: uppercase !important;
-        color: #AA820A !important;
+        color: #1A1A1A !important;
         padding: 16px 20px !important;
         border: none !important;
         background: transparent !important;
         white-space: nowrap !important;
-        opacity: 0.8;
+        opacity: 1 !important;
     }
     
     .stTabs [aria-selected="true"] {
@@ -513,7 +513,6 @@ def render_inicio():
     for img, title, desc in essence:
         src = img_b64(img)
         
-        # Ajuste especial para la primera imagen (logo de los globos inicio1.jpg) para que no se corte
         if img == "inicio1.jpg":
             if src:
                 img_tag = (
@@ -605,7 +604,7 @@ def render_contacto():
         )
 
         st.markdown(f"""
-        <div style="padding:8px 0;">
+        <div class="glass-card" style="padding:24px; height:100%;">
           <p class="ornament" style="margin-bottom:12px;">✦ +CHIC L.L.C.</p>
           <h3 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:#8B0000;margin-bottom:16px;">Luxury Boutique</h3>
           <p style="font-family:Montserrat,sans-serif;font-size:0.85rem;color:#6B6B6B;line-height:1.7;margin-bottom:24px;">
