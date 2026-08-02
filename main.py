@@ -1,7 +1,7 @@
 """
 CHIC — Boutique de Lujo | main.py
-Versión corregida con ajustes visuales de Hero, colores de etiqueta y logo de globos.
-Arquitectura: proyecto_+Chic_app/
+Versión corregida y optimizada para Streamlit Cloud con rutas seguras y arquitectura robusta.
+Arquitectura del proyecto:
   ├── main.py
   ├── static/     (manifest.json, sw.js, iconos)
   ├── assets/     (multimedia)
@@ -14,6 +14,7 @@ from pathlib import Path
 import streamlit as st
 
 # ── Configuración de la página ────────────────────────────────────────────────
+# Debe ser la primera instrucción de Streamlit en ejecutarse
 st.set_page_config(
     page_title="+CHIC | Luxury Gifts · Sarasota, FL",
     page_icon="✦",
@@ -21,8 +22,8 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ── Rutas relativas seguras ───────────────────────────────────────────────────
-BASE_DIR = Path(__file__).parent
+# ── Rutas relativas seguras para Streamlit Cloud y ejecución local ────────────
+BASE_DIR = Path(__file__).resolve().parent
 ASSETS   = BASE_DIR / "assets"
 CSS_FILE = BASE_DIR / "css" / "luxury_style.css"
 
@@ -36,10 +37,19 @@ def img_b64(filename: str) -> str:
     """Convierte una imagen local a Data-URI base64 con caché de Streamlit."""
     try:
         p = ASSETS / filename
-        if not p.exists():
+        if not p.exists() or not p.is_file():
             return ""
-        ext = str(p).lower()
-        mime = "image/jpeg" if ext.endswith((".jpg", ".jpeg")) else "image/png"
+        suffix = p.suffix.lower()
+        mime_map = {
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".png": "image/png",
+            ".webp": "image/webp",
+            ".svg": "image/svg+xml",
+            ".gif": "image/gif",
+            ".ico": "image/x-icon",
+        }
+        mime = mime_map.get(suffix, "image/jpeg")
         data = p.read_bytes()
         encoded = base64.b64encode(data).decode("utf-8")
         return f"data:{mime};base64,{encoded}"
@@ -48,11 +58,12 @@ def img_b64(filename: str) -> str:
 
 
 @st.cache_data(show_spinner=False)
-def load_css_file(css_path: Path) -> str:
+def load_css_file(css_path_str: str) -> str:
     """Carga en caché el contenido del archivo CSS externo de forma segura."""
     try:
-        if css_path.exists():
-            return css_path.read_text(encoding="utf-8")
+        p = Path(css_path_str)
+        if p.exists() and p.is_file():
+            return p.read_text(encoding="utf-8")
     except Exception:
         pass
     return ""
@@ -71,7 +82,7 @@ def inject_pwa_and_css():
     <link rel="apple-touch-icon" href="/static/icon-192.png">
     """, unsafe_allow_html=True)
 
-    css_external = load_css_file(CSS_FILE)
+    css_external = load_css_file(str(CSS_FILE))
     if css_external:
         st.markdown(f"<style>{css_external}</style>", unsafe_allow_html=True)
 
@@ -504,19 +515,29 @@ def render_inicio():
         
         # Ajuste especial para la primera imagen (logo de los globos inicio1.jpg) para que no se corte
         if img == "inicio1.jpg":
-            img_tag = (
-                f'<div style="position:relative;overflow:hidden;aspect-ratio:4/3;background:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:12px;">'
-                f'<img src="{src}" alt="{title}" style="width:100%;height:100%;object-fit:contain;display:block;margin:0;">'
-                f'</div>'
-                if src else ""
-            )
+            if src:
+                img_tag = (
+                    f'<div style="position:relative;overflow:hidden;aspect-ratio:4/3;background:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:12px;">'
+                    f'<img src="{src}" alt="{title}" style="width:100%;height:100%;object-fit:contain;display:block;margin:0;">'
+                    f'</div>'
+                )
+            else:
+                img_tag = (
+                    f'<div style="position:relative;overflow:hidden;aspect-ratio:4/3;background:#F5F0E8;display:flex;align-items:center;justify-content:center;color:#D4AF37;font-size:0.8rem;">'
+                    f'📷 {img}</div>'
+                )
         else:
-            img_tag = (
-                f'<div style="position:relative;overflow:hidden;aspect-ratio:4/3;">'
-                f'<img src="{src}" alt="{title}" style="width:100%;height:100%;display:block;margin:0;object-fit:cover;">'
-                f'</div>'
-                if src else ""
-            )
+            if src:
+                img_tag = (
+                    f'<div style="position:relative;overflow:hidden;aspect-ratio:4/3;">'
+                    f'<img src="{src}" alt="{title}" style="width:100%;height:100%;display:block;margin:0;object-fit:cover;">'
+                    f'</div>'
+                )
+            else:
+                img_tag = (
+                    f'<div style="position:relative;overflow:hidden;aspect-ratio:4/3;background:#F5F0E8;display:flex;align-items:center;justify-content:center;color:#D4AF37;font-size:0.8rem;">'
+                    f'📷 {img}</div>'
+                )
         
         cards += f"""
         <div class="glass-card">
@@ -563,16 +584,27 @@ def render_contacto():
     with col_imgs:
         for img in ["contacto1.jpg", "contacto2.jpg", "contacto3.jpg"]:
             src = img_b64(img)
-            if src:
-                img_html = (
-                    f'<div class="contact-img" style="aspect-ratio:4/3;margin-bottom:16px;">'
-                    f'<img src="{src}" alt="+CHIC" style="width:100%;height:100%;display:block;margin:0;object-fit:cover;">'
-                    f'</div>'
-                )
-                st.markdown(img_html, unsafe_allow_html=True)
+            img_html = (
+                f'<div class="contact-img" style="aspect-ratio:4/3;margin-bottom:16px;overflow:hidden;">'
+                f'<img src="{src}" alt="+CHIC" style="width:100%;height:100%;display:block;margin:0;object-fit:cover;">'
+                f'</div>'
+                if src else
+                f'<div class="contact-img" style="aspect-ratio:4/3;margin-bottom:16px;display:flex;align-items:center;justify-content:center;background:#F5F0E8;color:#D4AF37;font-size:0.8rem;">'
+                f'📷 {img}</div>'
+            )
+            st.markdown(img_html, unsafe_allow_html=True)
 
     with col_info:
-        st.markdown("""
+        btn_order = wa_button(
+            "Hi! I'd like to place a custom order with +CHIC. Can you assist me?",
+            "✦ Place Order via WhatsApp"
+        )
+        btn_query = wa_button(
+            "Hi! I have a question about +CHIC gifts in Sarasota.",
+            "💬 General Inquiry"
+        )
+
+        st.markdown(f"""
         <div style="padding:8px 0;">
           <p class="ornament" style="margin-bottom:12px;">✦ +CHIC L.L.C.</p>
           <h3 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:#8B0000;margin-bottom:16px;">Luxury Boutique</h3>
@@ -591,23 +623,12 @@ def render_contacto():
           </div>
 
           <div style="display:flex;flex-direction:column;gap:12px;margin-top:24px;margin-bottom:16px;">
-        """, unsafe_allow_html=True)
-
-        st.markdown(wa_button(
-            "Hi! I'd like to place a custom order with +CHIC. Can you assist me?",
-            "✦ Place Order via WhatsApp"
-        ), unsafe_allow_html=True)
-
-        st.markdown(wa_button(
-            "Hi! I have a question about +CHIC gifts in Sarasota.",
-            "💬 General Inquiry"
-        ), unsafe_allow_html=True)
-
-        st.markdown("""
+            {btn_order}
+            {btn_query}
           </div>
 
           <div style="margin-top:28px;padding:16px;background:rgba(212,175,55,0.07);border-left:3px solid #D4AF37;border-radius:8px;">
-            <p style="font-family:Montserrat,sans-serif;font-size:0.78rem;color:#6B6B6B;line-height:1.6;font-style:italic;">
+            <p style="font-family:Montserrat,sans-serif;font-size:0.78rem;color:#6B6B6B;line-height:1.6;font-style:italic;margin:0;">
               "We don't send packages — we deliver stories with the +Chic seal."
             </p>
           </div>
