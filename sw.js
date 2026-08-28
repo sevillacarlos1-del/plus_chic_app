@@ -1,30 +1,33 @@
-const CACHE_NAME = '+chic-luxury-v2';
+const CACHE_NAME = '+chic-luxury-v3';
 const urlsToCache = [
   '/',
-  'manifest.json',
-  'assets/icono-192.png',
-  'assets/icono-512.png'
+  '/app/static/assets/manifest.json',
+  '/app/static/assets/icono-192.png',
+  '/app/static/assets/icono-512.png'
 ];
 
-// Instalación del Service Worker
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then(async cache => {
+      for (const url of urlsToCache) {
+        try {
+          await cache.add(url);
+        } catch (err) {
+          console.warn('No se pudo cachear:', url, err);
+        }
+      }
+    })
   );
   self.skipWaiting();
 });
 
-// Activación y limpieza de cachés antiguas
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
+    caches.keys().then(keys => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
+        keys.map(key => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
           }
         })
       );
@@ -33,12 +36,10 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Intercepción de peticiones (Fetch)
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
-      })
+    caches.match(event.request).then(cachedResponse => {
+      return cachedResponse || fetch(event.request);
+    })
   );
 });
