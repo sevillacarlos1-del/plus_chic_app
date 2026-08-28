@@ -26,6 +26,12 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
+# ==============================================================================
+# 1. RELOJ KEEP-ALIVE (PING RENDER)
+# ==============================================================================
+if st.query_params.get("ping") == "true":
+    st.write("pong")
+    st.stop()
 
 # ── Rutas relativas seguras ───────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent
@@ -698,3 +704,13 @@ with tab_contacto:
     render_contacto()
 
 render_footer()
+# ==============================================================================
+# NOTA INFORMATIVA DE INSTALACIÓN PWA
+# ==============================================================================
+st.markdown("---")
+st.markdown("### 📲 **Instala la App en tu Móvil**")
+st.info(
+    "**¿Quieres tener esta App en tu pantalla de inicio?**\n\n"
+    "• **Android (Chrome):** Toca los 3 puntos arriba a la derecha y selecciona **'Agregar a la pantalla principal'** o **'Instalar aplicación'**.\n\n"
+    "• **iPhone (Safari):** Toca el botón **Compartir** (el cuadro con la flecha hacia arriba) y selecciona **'Agregar al inicio'**."
+)
