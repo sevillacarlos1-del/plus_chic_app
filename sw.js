@@ -1,7 +1,9 @@
-const CACHE_NAME = '+chic-luxury-v1';
+const CACHE_NAME = '+chic-luxury-v2';
 const urlsToCache = [
   '/',
-  '/manifest.json'
+  'manifest.json',
+  'assets/icono-192.png',
+  'assets/icono-512.png'
 ];
 
 // Instalación del Service Worker
@@ -31,12 +33,12 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Estrategia Network First / Cache fallback
+// Intercepción de peticiones (Fetch)
 self.addEventListener('fetch', event => {
   event.respondWith(
-    fetch(event.request)
-      .catch(() => {
-        return caches.match(event.request);
+    caches.match(event.request)
+      .then(response => {
+        return response || fetch(event.request);
       })
   );
 });
