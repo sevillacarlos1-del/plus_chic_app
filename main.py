@@ -2,17 +2,10 @@ from pathlib import Path
 from PIL import Image
 import streamlit as st
 
-# 1. Ejecutar el parche PWA
-try:
-    from patch_index import patch_streamlit_index
-    patch_streamlit_index()
-except Exception:
-    pass
-
-# 2. Cargar ícono para la pestaña del navegador
+# Cargar ícono para la pestaña de la página
 ROOT_DIR = Path(__file__).parent.resolve()
-icon_path = ROOT_DIR / "assets" / "icono-192.png"
-page_icon_val = "✦"
+icon_path = ROOT_DIR / "assets" / "icon-192.png"
+page_icon_val = "✨"
 if icon_path.exists():
     try:
         page_icon_val = Image.open(icon_path)
@@ -20,12 +13,11 @@ if icon_path.exists():
         pass
 
 st.set_page_config(
-    page_title="+CHIC | Luxury Gifts · Sarasota, FL",
+    page_title="+CHIC | Luxury Gifts",
     page_icon=page_icon_val,
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="collapsed"
 )
-
 
 """
 +CHIC — Boutique de Lujo | main.py
