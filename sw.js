@@ -1,9 +1,9 @@
-const CACHE_NAME = '+chic-luxury-v3';
+const CACHE_NAME = '+chic-luxury-v4';
 const urlsToCache = [
   '/',
-  '/app/static/assets/manifest.json',
-  '/app/static/assets/icono-192.png',
-  '/app/static/assets/icono-512.png'
+  '/app/static/manifest.json',
+  '/app/static/icono-192.png',
+  '/app/static/icono-512.png'
 ];
 
 self.addEventListener('install', event => {
