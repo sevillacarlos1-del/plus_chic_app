@@ -4,7 +4,7 @@ import streamlit as st
 
 # Cargar ícono para la pestaña de la página
 ROOT_DIR = Path(__file__).parent.resolve()
-icon_path = ROOT_DIR / "assets" / "icon-192.png"
+icon_path = ROOT_DIR / "static" / "icon-192.png"
 page_icon_val = "✨"
 if icon_path.exists():
     try:
