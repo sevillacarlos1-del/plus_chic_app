@@ -1,9 +1,9 @@
-const CACHE_NAME = '+chic-luxury-v4';
+const CACHE_NAME = '+chic-luxury-v5'; // Subimos la versión para forzar la actualización
 const urlsToCache = [
   '/',
-  '/app/static/manifest.json',
-  '/app/static/icono-192.png',
-  '/app/static/icono-512.png'
+  '/static/manifest.json',
+  '/static/icon-192.png',
+  '/static/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
