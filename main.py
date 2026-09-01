@@ -2,9 +2,11 @@ from pathlib import Path
 from PIL import Image
 import streamlit as st
 
-# Cargar ícono para la pestaña de la página
+# Ruta absoluta al icono
 ROOT_DIR = Path(__file__).parent.resolve()
 icon_path = ROOT_DIR / "static" / "icon-192.png"
+
+# Si existe la imagen, usamos el objeto Image; si no, el emoji de respaldo
 page_icon_val = "✨"
 if icon_path.exists():
     try:
@@ -17,9 +19,15 @@ st.set_page_config(
     page_icon=page_icon_val,
     layout="wide",
     initial_sidebar_state="collapsed"
-)
-
-"""
+# Inyección de meta etiquetas HTML para el PWA en teléfonos
+st.markdown("""
+    <head>
+        <link rel="manifest" href="/static/manifest.json">
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/icon-192.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="/static/icon-192.png">
+        <meta name="theme-color" content="#1a1a1a">
+    </head>
+""", unsafe_allow_html=True)
 +CHIC — Boutique de Lujo | main.py
 Versión final y corregida para Streamlit Cloud, Chrome Desktop, iOS y Android.
 Arquitectura del proyecto:
