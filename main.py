@@ -30,20 +30,7 @@ st.markdown("""
         <meta name="theme-color" content="#1a1a1a">
     </head>
 """, unsafe_allow_html=True)
-+CHIC — Boutique de Lujo | main.py
-Versión final y corregida para Streamlit Cloud, Chrome Desktop, iOS y Android.
-Arquitectura del proyecto:
-  ├── main.py
-  ├── static/
-  │   ├── manifest.json
-  │   ├── sw.js
-  │   ├── icon-192.png
-  │   └── icon-512.png
-  └── assets/
-      ├── css/
-      │   └── styles.css
-      └── images/
-"""
+
 
 import base64
 import urllib.parse
