@@ -2,11 +2,11 @@ from pathlib import Path
 from PIL import Image
 import streamlit as st
 
-# Ruta absoluta al icono
+# +CHIC - Boutique de Lujo | main.py
+
 ROOT_DIR = Path(__file__).parent.resolve()
 icon_path = ROOT_DIR / "static" / "icon-192.png"
 
-# Si existe la imagen, usamos el objeto Image; si no, el emoji de respaldo
 page_icon_val = "✨"
 if icon_path.exists():
     try:
@@ -19,6 +19,8 @@ st.set_page_config(
     page_icon=page_icon_val,
     layout="wide",
     initial_sidebar_state="collapsed"
+)
+
 # Inyección de meta etiquetas HTML para el PWA en teléfonos
 st.markdown("""
     <head>
